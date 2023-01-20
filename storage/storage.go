@@ -10,4 +10,5 @@ type Storage interface {
 type User struct {
 	Id       int
 	Username string
+	Meta     interface{}
 }
