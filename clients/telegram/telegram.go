@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	methodGetUpdates = "getUpdates"
+	methodGetUpdates  = "getUpdates"
+	methodSendMessage = "sendMessage"
 )
 
 type Client struct {
@@ -46,6 +47,22 @@ func (c *Client) Updates(offset, limit int) ([]Update, error) {
 
 }
 
+func (c *Client) SendMessage(chatID int, text string) error {
+	query := url.Values{}
+	query.Add("chat_id", strconv.Itoa(chatID))
+	query.Add("text", text)
+
+	_, err := c.doRequest(methodSendMessage, query)
+	if err != nil {
+		return fmt.Errorf("can't send message: %w", err)
+	}
+	return nil
+}
+
+func ClientPath(token string) string {
+	return "bot" + token
+}
+
 func (c *Client) doRequest(method string, query url.Values) ([]byte, error) {
 	u := url.URL{
 		Scheme: "https",
@@ -55,26 +72,18 @@ func (c *Client) doRequest(method string, query url.Values) ([]byte, error) {
 
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
-		return nil, fmt.Errorf("Can't do request: %w", err)
+		return nil, fmt.Errorf("can't do request: %w", err)
 	}
 	req.URL.RawQuery = query.Encode()
 	resp, err := c.client.Do(req)
-	defer resp.Body.Close()
 	if err != nil {
-		return nil, fmt.Errorf("Can't do request: %w", err)
+		return nil, fmt.Errorf("can't do request: %w", err)
 	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("Can't do request: %w", err)
+		return nil, fmt.Errorf("can't do request: %w", err)
 	}
 	return body, nil
-}
-
-func (c *Client) SendMessage() {
-
-}
-
-func ClientPath(token string) string {
-	return "bot" + token
 }

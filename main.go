@@ -2,19 +2,22 @@ package main
 
 import (
 	"log"
+	"os"
+
+	"calc-bot/clients/telegram"
 
 	"github.com/joho/godotenv"
-	//"os"
 )
 
 func main() {
-	//var tgClient Client
+	// var tgClient Client
 
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	//tgToken := os.Getenv("TG_TOKEN")
-	//tgClient = telegram.New(tgToken)
+	tgToken := os.Getenv("TG_TOKEN")
+	tgHost := os.Getenv("TG_HOST")
+	tgClient := telegram.New(tgHost, tgToken)
 
 	//fetcher := fetcher.New(tgClient)
 	//processor := processor.New(tgClient)
