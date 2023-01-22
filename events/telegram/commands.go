@@ -27,6 +27,8 @@ func (p *Processor) handle(text string, chatID int, username string) error {
 				p.tg.SendMessage(chatID, msgUnknown)
 				return err
 			}
+			// Trims .0000
+			result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
 			return p.tg.SendMessage(chatID, result)
 		case strings.Contains(text, "-"):
 			result, err := suberString(text)
@@ -35,6 +37,8 @@ func (p *Processor) handle(text string, chatID int, username string) error {
 				p.tg.SendMessage(chatID, msgUnknown)
 				return err
 			}
+			// Trims .0000
+			result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
 			return p.tg.SendMessage(chatID, result)
 		case strings.Contains(text, "*"):
 			result, err := multerString(text)
@@ -43,6 +47,8 @@ func (p *Processor) handle(text string, chatID int, username string) error {
 				p.tg.SendMessage(chatID, msgUnknown)
 				return err
 			}
+			// Trims .0000
+			result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
 			return p.tg.SendMessage(chatID, result)
 		case strings.Contains(text, "/"):
 			result, err := diverString(text)
@@ -51,6 +57,8 @@ func (p *Processor) handle(text string, chatID int, username string) error {
 				p.tg.SendMessage(chatID, msgUnknown)
 				return err
 			}
+			// Trims .0000
+			result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
 			return p.tg.SendMessage(chatID, result)
 		default:
 			return p.tg.SendMessage(chatID, msgUnknown)
@@ -106,16 +114,16 @@ func diverString(text string) (string, error) {
 func argsParser(arr []string) (float64, float64, error) {
 	x1, err := strconv.ParseFloat(arr[0], 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("can't parse 1st argument:", err)
+		return 0, 0, fmt.Errorf("can't parse 1st argument: %w", err)
 	}
 	x2, err := strconv.ParseFloat(arr[1], 64)
 	if err != nil {
-		return 0, 0, fmt.Errorf("can't parse 2st argument:", err)
+		return 0, 0, fmt.Errorf("can't parse 2st argument: %w", err)
 	}
 	return x1, x2, nil
 }
 
 func isMathOperation(text string) bool {
 	// Regular expression that show us if text is basic math expression
-	return regexp.MustCompile(`[0-9]+.?[0-9]+[-+\/*][0-9]+.?[0-9]+`).MatchString(text)
+	return regexp.MustCompile(`[0-9]+\.?[0-9]*[-+\/*][0-9]+\.?[0-9]*`).MatchString(text)
 }
