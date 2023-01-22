@@ -53,11 +53,10 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 func (p *Processor) Process(event events.Event) error {
 	switch event.Type {
 	case events.Message:
-		p.processMessage(event)
+		return p.processMessage(event)
 	default:
 		return fmt.Errorf("can't handle message: %w", ErrUnknownEventType)
 	}
-	return nil
 }
 
 func (p *Processor) processMessage(event events.Event) error {
@@ -65,7 +64,9 @@ func (p *Processor) processMessage(event events.Event) error {
 	if err != nil {
 		return fmt.Errorf("can't handle message: %w", err)
 	}
-	// logic of handling message
+	if err := p.handle(event.Text, meta.ChatID, meta.Username); err != nil {
+		return fmt.Errorf("can't handle message: %w", err)
+	}
 	return nil
 }
 

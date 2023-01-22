@@ -10,8 +10,6 @@ import (
 )
 
 func main() {
-	// var tgClient Client
-
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
