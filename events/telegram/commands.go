@@ -27,9 +27,7 @@ func (p *Processor) handle(text string, chatID int, username string) error {
 				p.tg.SendMessage(chatID, msgUnknown)
 				return err
 			}
-			// Trims .0000
-			result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
-			return p.tg.SendMessage(chatID, result)
+			return p.tg.SendMessage(chatID, formatAnswer(text, result))
 		case strings.Contains(text, "-"):
 			result, err := suberString(text)
 			if err != nil {
@@ -37,9 +35,7 @@ func (p *Processor) handle(text string, chatID int, username string) error {
 				p.tg.SendMessage(chatID, msgUnknown)
 				return err
 			}
-			// Trims .0000
-			result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
-			return p.tg.SendMessage(chatID, result)
+			return p.tg.SendMessage(chatID, formatAnswer(text, result))
 		case strings.Contains(text, "*"):
 			result, err := multerString(text)
 			if err != nil {
@@ -47,9 +43,7 @@ func (p *Processor) handle(text string, chatID int, username string) error {
 				p.tg.SendMessage(chatID, msgUnknown)
 				return err
 			}
-			// Trims .0000
-			result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
-			return p.tg.SendMessage(chatID, result)
+			return p.tg.SendMessage(chatID, formatAnswer(text, result))
 		case strings.Contains(text, "/"):
 			result, err := diverString(text)
 			if err != nil {
@@ -57,9 +51,7 @@ func (p *Processor) handle(text string, chatID int, username string) error {
 				p.tg.SendMessage(chatID, msgUnknown)
 				return err
 			}
-			// Trims .0000
-			result = strings.TrimRight(strings.TrimRight(result, "0"), ".")
-			return p.tg.SendMessage(chatID, result)
+			return p.tg.SendMessage(chatID, formatAnswer(text, result))
 		default:
 			return p.tg.SendMessage(chatID, msgUnknown)
 		}
@@ -126,4 +118,9 @@ func argsParser(arr []string) (float64, float64, error) {
 func isMathOperation(text string) bool {
 	// Regular expression that show us if text is basic math expression
 	return regexp.MustCompile(`[0-9]+\.?[0-9]*[-+\/*][0-9]+\.?[0-9]*`).MatchString(text)
+}
+
+func formatAnswer(expr, res string) string {
+	// Trims .0000
+	return fmt.Sprintf("%s=%s", expr, strings.TrimRight(strings.TrimRight(res, "0"), "."))
 }
