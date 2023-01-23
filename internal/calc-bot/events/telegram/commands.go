@@ -122,5 +122,5 @@ func isMathOperation(text string) bool {
 
 func formatAnswer(expr, res string) string {
 	// Trims .0000
-	return fmt.Sprintf("%s=%s", expr, strings.TrimRight(strings.TrimRight(res, "0"), "."))
+	return fmt.Sprintf("%s = %s", expr, strings.TrimRight(strings.TrimRight(res, "0"), "."))
 }

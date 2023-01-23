@@ -1,7 +1,7 @@
 package sqlite
 
 import (
-	"calc-bot/internal/storage"
+	"calc-bot/internal/calc-bot/storage"
 	"context"
 	"database/sql"
 	"fmt"
