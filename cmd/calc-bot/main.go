@@ -3,27 +3,25 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 
-	tgClient "calc-bot/clients/telegram"
-	event_consumer "calc-bot/consumer/event-consumer"
-	"calc-bot/events/telegram"
-	"calc-bot/storage/sqlite"
-
-	"github.com/joho/godotenv"
+	"calc-bot/config"
+	tgClient "calc-bot/internal/clients/telegram"
+	event_consumer "calc-bot/internal/consumer/event-consumer"
+	"calc-bot/internal/events/telegram"
+	"calc-bot/internal/storage/sqlite"
 )
 
 const (
 	batchSize   = 100
-	storagePath = "data/sqlite"
+	storagePath = "../../data/sqlite/storage.db"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+	config, err := config.New()
+	if err != nil {
+		log.Fatal("Can't get config: ", err)
+
 	}
-	tgToken := os.Getenv("TG_TOKEN")
-	tgHost := os.Getenv("TG_HOST")
 
 	storage, err := sqlite.New(storagePath)
 	if err != nil {
@@ -34,7 +32,7 @@ func main() {
 		log.Fatal("Service can't init storage: ", err)
 	}
 
-	eventsHandler := telegram.New(tgClient.New(tgHost, tgToken), storage)
+	eventsHandler := telegram.New(tgClient.New(config.TgHost, config.TgToken), storage)
 
 	log.Printf("Service has been started")
 

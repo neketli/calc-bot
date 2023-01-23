@@ -1,7 +1,7 @@
 package event_consumer
 
 import (
-	"calc-bot/events"
+	"calc-bot/internal/events"
 	"log"
 	"sync"
 	"time"

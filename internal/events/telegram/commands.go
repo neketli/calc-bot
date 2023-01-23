@@ -104,11 +104,11 @@ func diverString(text string) (string, error) {
 }
 
 func argsParser(arr []string) (float64, float64, error) {
-	x1, err := strconv.ParseFloat(arr[0], 64)
+	x1, err := strconv.ParseFloat(strings.Trim(arr[0], " "), 64)
 	if err != nil {
 		return 0, 0, fmt.Errorf("can't parse 1st argument: %w", err)
 	}
-	x2, err := strconv.ParseFloat(arr[1], 64)
+	x2, err := strconv.ParseFloat(strings.Trim(arr[1], " "), 64)
 	if err != nil {
 		return 0, 0, fmt.Errorf("can't parse 2st argument: %w", err)
 	}
@@ -117,7 +117,7 @@ func argsParser(arr []string) (float64, float64, error) {
 
 func isMathOperation(text string) bool {
 	// Regular expression that show us if text is basic math expression
-	return regexp.MustCompile(`[0-9]+\.?[0-9]*[-+\/*][0-9]+\.?[0-9]*`).MatchString(text)
+	return regexp.MustCompile(` *[0-9]+\.?[0-9]* *[-+\/*] *[0-9]+\.?[0-9]* *`).MatchString(text)
 }
 
 func formatAnswer(expr, res string) string {

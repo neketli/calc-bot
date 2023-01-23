@@ -1,9 +1,9 @@
 package telegram
 
 import (
-	"calc-bot/clients/telegram"
-	"calc-bot/events"
-	"calc-bot/storage"
+	"calc-bot/internal/clients/telegram"
+	"calc-bot/internal/events"
+	"calc-bot/internal/storage"
 	"context"
 	"errors"
 	"fmt"

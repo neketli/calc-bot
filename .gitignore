@@ -1,3 +1,4 @@
 .env
-calc-bot
+/calc-bot
 *debug*
+data
