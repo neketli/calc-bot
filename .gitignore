@@ -1,4 +1,4 @@
 .env
 /calc-bot
 *debug*
-data
+storage.db
