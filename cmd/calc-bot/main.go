@@ -13,14 +13,14 @@ import (
 
 const (
 	batchSize   = 100
-	storagePath = "../../data/sqlite/storage.db"
+	storagePath = "./data/sqlite/storage.db"
+	configPath  = "./config/config.yml"
 )
 
 func main() {
-	config, err := config.New()
+	config, err := config.New(configPath)
 	if err != nil {
-		log.Fatal("Can't get config: ", err)
-
+		log.Fatal("Can't setup config: ", err)
 	}
 
 	storage, err := sqlite.New(storagePath)
@@ -32,7 +32,7 @@ func main() {
 		log.Fatal("Service can't init storage: ", err)
 	}
 
-	eventsHandler := telegram.New(tgClient.New(config.TgHost, config.TgToken), storage)
+	eventsHandler := telegram.New(tgClient.New(config.TG.TgHost, config.TG.TgToken), storage)
 
 	log.Printf("Service has been started")
 

@@ -1,24 +1,45 @@
 package config
 
 import (
-	"log"
-	"os"
+	"fmt"
 
-	"github.com/joho/godotenv"
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
-type Config struct {
-	TgToken string
-	TgHost  string
-}
-
-func New() (*Config, error) {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file: ", err)
+type (
+	Config struct {
+		App  `yaml:"app"`
+		HTTP `yaml:"http"`
+		TG   `yaml:"telegram"`
 	}
 
-	return &Config{
-		TgToken: os.Getenv("TG_TOKEN"),
-		TgHost:  os.Getenv("TG_HOST"),
-	}, nil
+	App struct {
+		Name    string `env-required:"true" yaml:"name"    env:"APP_NAME"`
+		Version string `env-required:"true" yaml:"version" env:"APP_VERSION"`
+	}
+
+	HTTP struct {
+		Port string `env-required:"true" yaml:"port" env:"HTTP_PORT"`
+	}
+
+	TG struct {
+		TgToken string `env-required:"true" yaml:"token" env:"TG_TOKEN"`
+		TgHost  string `env-required:"true" yaml:"host"`
+	}
+)
+
+func New(path string) (*Config, error) {
+	cfg := &Config{}
+
+	err := cleanenv.ReadConfig(path, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("can't read config: %w", err)
+	}
+
+	err = cleanenv.ReadEnv(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
 }

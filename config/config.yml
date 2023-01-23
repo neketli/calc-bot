@@ -1,0 +1,9 @@
+app:
+  name: "calc-bot"
+  version: "1.0.0"
+
+http:
+  port: "8080"
+
+telegram:
+  host: "api.telegram.org"
