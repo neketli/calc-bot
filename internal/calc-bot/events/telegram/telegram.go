@@ -68,9 +68,6 @@ func (p *Processor) processMessage(event events.Event) error {
 	if err := p.handle(event.Text, meta.ChatID, meta.UserName); err != nil {
 		return fmt.Errorf("can't handle message: %w", err)
 	}
-	if err := p.addNewUserInfo(context.TODO(), meta); err != nil {
-		return fmt.Errorf("can't add new user: %w", err)
-	}
 	return nil
 }
 
@@ -118,7 +115,7 @@ func (p *Processor) addNewUserInfo(ctx context.Context, userMeta Meta) error {
 	if err != nil {
 		return fmt.Errorf("can't get user info :%w", err)
 	}
-	if user.UserName == "" {
+	if user.UserName != "" {
 		return nil
 	}
 	if err := p.storage.Save(ctx, (*storage.User)(&userMeta)); err != nil {

@@ -5,6 +5,7 @@ import (
 	tgClient "calc-bot/internal/calc-bot/clients/telegram"
 	event_consumer "calc-bot/internal/calc-bot/consumer/event-consumer"
 	"calc-bot/internal/calc-bot/events/telegram"
+	"calc-bot/internal/calc-bot/server"
 	"calc-bot/internal/calc-bot/storage/sqlite"
 	"context"
 	"log"
@@ -28,6 +29,12 @@ func Start(config *config.Config) {
 	eventsHandler := telegram.New(tgClient.New(config.TG.TgHost, config.TG.TgToken), storage)
 
 	log.Printf("Service has been started")
+
+	go func() {
+		if err := server.Start(config, storage); err != nil {
+			log.Fatal("Service's server stopped: ", err)
+		}
+	}()
 
 	consumer := event_consumer.New(eventsHandler, eventsHandler, batchSize)
 	if err := consumer.Start(); err != nil {

@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"regexp"
@@ -61,7 +62,11 @@ func (p *Processor) handle(text string, chatID int, userName string) error {
 	case HelpCommand:
 		return p.tg.SendMessage(chatID, msgHelp)
 	case StartCommand:
-		return p.tg.SendMessage(chatID, msgHello)
+		p.tg.SendMessage(chatID, msgHello)
+		if err := p.addNewUserInfo(context.TODO(), Meta{ChatID: chatID, UserName: userName}); err != nil {
+			return fmt.Errorf("can't add new user: %w", err)
+		}
+		return nil
 	default:
 		return p.tg.SendMessage(chatID, msgUnknown)
 	}
