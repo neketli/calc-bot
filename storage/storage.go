@@ -1,14 +1,15 @@
 package storage
 
+import "context"
+
 type Storage interface {
-	Save(u *User) error
-	Remove(u *User) error
-	Get(id string) (User, error)
-	IsExists(u *User) (bool, error)
+	Save(ctx context.Context, u *User) error
+	Remove(ctx context.Context, u *User) error
+	Get(ctx context.Context, chatID int) (User, error)
+	GetCount(ctx context.Context) (int, error)
 }
 
 type User struct {
-	Id       int
-	Username string
-	Meta     interface{}
+	ChatID   int
+	UserName string
 }

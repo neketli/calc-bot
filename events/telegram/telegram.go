@@ -4,6 +4,7 @@ import (
 	"calc-bot/clients/telegram"
 	"calc-bot/events"
 	"calc-bot/storage"
+	"context"
 	"errors"
 	"fmt"
 )
@@ -16,7 +17,7 @@ type Processor struct {
 
 type Meta struct {
 	ChatID   int
-	Username string
+	UserName string
 }
 
 var (
@@ -24,10 +25,10 @@ var (
 	ErrUnknownMetaType  = errors.New("unknown meta type")
 )
 
-func New(client *telegram.Client) *Processor { //, storage storage.Storage) *Processor {
+func New(client *telegram.Client, storage storage.Storage) *Processor {
 	return &Processor{
-		tg: client,
-		//storage: storage,
+		tg:      client,
+		storage: storage,
 	}
 }
 
@@ -64,8 +65,11 @@ func (p *Processor) processMessage(event events.Event) error {
 	if err != nil {
 		return fmt.Errorf("can't handle message: %w", err)
 	}
-	if err := p.handle(event.Text, meta.ChatID, meta.Username); err != nil {
+	if err := p.handle(event.Text, meta.ChatID, meta.UserName); err != nil {
 		return fmt.Errorf("can't handle message: %w", err)
+	}
+	if err := p.addNewUserInfo(context.TODO(), meta); err != nil {
+		return fmt.Errorf("can't add new user: %w", err)
 	}
 	return nil
 }
@@ -88,7 +92,7 @@ func event(upd telegram.Update) events.Event {
 	if updateType == events.Message {
 		res.Meta = Meta{
 			ChatID:   upd.Message.Chat.ID,
-			Username: upd.Message.User.Username,
+			UserName: upd.Message.User.UserName,
 		}
 	}
 
@@ -107,4 +111,18 @@ func fetchType(upd telegram.Update) events.Type {
 		return events.Message
 	}
 	return events.Unknown
+}
+
+func (p *Processor) addNewUserInfo(ctx context.Context, userMeta Meta) error {
+	user, err := p.storage.Get(ctx, userMeta.ChatID)
+	if err != nil {
+		return fmt.Errorf("can't get user info :%w", err)
+	}
+	if user.UserName == "" {
+		return nil
+	}
+	if err := p.storage.Save(ctx, (*storage.User)(&userMeta)); err != nil {
+		return err
+	}
+	return nil
 }

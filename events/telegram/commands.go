@@ -13,10 +13,10 @@ const (
 	HelpCommand  = "/help"
 )
 
-func (p *Processor) handle(text string, chatID int, username string) error {
+func (p *Processor) handle(text string, chatID int, userName string) error {
 	text = strings.TrimSpace(text)
 
-	log.Printf("DEBUG: new command '%s' from '%s'", text, username)
+	log.Printf("DEBUG: new command '%s' from '%s'", text, userName)
 
 	if isMathOperation(text) {
 		switch {
